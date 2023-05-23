@@ -47,7 +47,7 @@ class CIFAR10(data.Dataset):
 
     def __init__(self, root, train=True,
                  transform=None, target_transform=None,
-                 download=False,
+                 download=True,
                  noise_type=None, noise_rate=0.2, random_state=0):
         self.root = os.path.expanduser(root)
         self.transform = transform
@@ -57,12 +57,12 @@ class CIFAR10(data.Dataset):
         self.noise_type=noise_type
         self.nb_classes=10
         idx_each_class_noisy = [[] for i in range(10)]
-        #if download:
-        #    self.download()
+        if download:
+           self.download()
 
-        #if not self._check_integrity():
-        #    raise RuntimeError('Dataset not found or corrupted.' +
-        #                       ' You can use download=True to download it')
+        if not self._check_integrity():
+           raise RuntimeError('Dataset not found or corrupted.' +
+                              ' You can use download=True to download it')
 
         # now load the picked numpy arrays
         if self.train:
