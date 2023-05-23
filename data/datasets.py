@@ -4,6 +4,10 @@ from .cifar import CIFAR10, CIFAR100
 
 
 
+vis_train_cifar10_transform = transforms.Compose([
+    transforms.ToTensor(),
+])
+
 train_cifar10_transform = transforms.Compose([
     transforms.RandomCrop(32, padding=4), 
     transforms.RandomHorizontalFlip(),
@@ -35,6 +39,13 @@ def input_dataset(dataset, noise_type, noise_ratio):
                                 noise_type=noise_type,
                                 noise_rate=noise_ratio
                            )
+        vis_train_dataset = CIFAR10(root='./data/',
+                                download=True,  
+                                train=True, 
+                                transform = vis_train_cifar10_transform,
+                                noise_type=noise_type,
+                                noise_rate=noise_ratio
+                           )
         test_dataset = CIFAR10(root='./data/',
                                 download=True,  
                                 train=False, 
@@ -44,24 +55,7 @@ def input_dataset(dataset, noise_type, noise_ratio):
                           )
         num_classes = 10
         num_training_samples = 50000
-    elif dataset == 'cifar100':
-        train_dataset = CIFAR100(root='./data/',
-                                download=True,  
-                                train=True, 
-                                transform=train_cifar100_transform,
-                                noise_type=noise_type,
-                                noise_rate=noise_ratio
-                            )
-        test_dataset = CIFAR100(root='./data/',
-                                download=True,  
-                                train=False, 
-                                transform=test_cifar100_transform,
-                                noise_type=noise_type,
-                                noise_rate=noise_ratio
-                            )
-        num_classes = 100
-        num_training_samples = 50000
-    return train_dataset, test_dataset, num_classes, num_training_samples
+    return train_dataset, vis_train_dataset, test_dataset, num_classes, num_training_samples
 
 
 
