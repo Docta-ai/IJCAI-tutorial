@@ -130,10 +130,74 @@ def f_alpha_hard(epoch):
     return alpha[epoch]
 #############################################################################################################
 
+# Implemenetation of cores in "https://arxiv.org/abs/2010.02347"
+def loss_cores(epoch, y, t,class_list, ind, noise_or_not,loss_all,loss_div_all, noise_prior = None):
+    beta = f_beta(epoch)
+    # if epoch == 1:
+    #     print(f'current beta is {beta}')
+    loss = F.cross_entropy(y, t, reduce = False)
+    loss_numpy = loss.data.cpu().numpy()
+    num_batch = len(loss_numpy)
+    loss_v = np.zeros(num_batch)
+    loss_div_numpy = float(np.array(0))
+    loss_ = -torch.log(F.softmax(y) + 1e-8)
+    # sel metric
+    loss_sel =  loss - torch.mean(loss_,1)
+    if noise_prior is None:
+        loss =  loss - beta*torch.mean(loss_,1)
+    else:
+        loss =  loss - beta*torch.sum(torch.mul(noise_prior, loss_),1)
+    
+    loss_div_numpy = loss_sel.data.cpu().numpy()
+    loss_all[ind,epoch] = loss_numpy
+    loss_div_all[ind,epoch] = loss_div_numpy
+    for i in range(len(loss_numpy)):
+        if epoch <=30:
+            loss_v[i] = 1.0
+        elif loss_div_numpy[i] <= -0.0:  # cifar10 synthetic 0.0, otherwise -8.0
+            loss_v[i] = 1.0
+    loss_v = loss_v.astype(np.float32)
+    loss_v_var = Variable(torch.from_numpy(loss_v)).cuda()
+    loss_ = loss_v_var * loss
+    if sum(loss_v) == 0.0:
+        return torch.mean(loss_)/100000000
+    else:
+        return torch.sum(loss_)/sum(loss_v), loss_v.astype(int)
+
+def f_beta(epoch, loss_type='cores'):
+    if loss_type == 'cores':
+        beta_max = 2.0
+    else:
+        beta_max = 1.0
+    beta1 = np.linspace(0.0, 0.0, num=10)
+    beta2 = np.linspace(0.0, beta_max, num=30)
+    beta3 = np.linspace(beta_max, beta_max, num=80)
+ 
+    beta = np.concatenate((beta1,beta2,beta3),axis=0)
+    return beta[epoch]
+#############################################################################################################
 
 
+# Implemenetation of loss correction in "https://openaccess.thecvf.com/content_cvpr_2017/papers/Patrini_Making_Deep_Neural_CVPR_2017_paper.pdf"
+def forward_loss(output, target, trans_mat):
+    # l_{forward}(y, h(x)) = l_{ce}(y, h(x) @ T)
+    outputs = F.softmax(output, dim=1)
+    outputs = outputs @ trans_mat.cuda()
+    outputs = torch.log(outputs)
+    #loss = CE(outputs, target)
+    loss = F.cross_entropy(outputs,target)
+    return loss
 
-
+def backward_loss(output, target, trans_mat):
+    # l_{forward}(y, h(x)) = l_{ce}(y, h(x) @ T)
+    trans_mat_inv = torch.inverse(trans_mat).cuda()
+    outputs = F.softmax(output, dim=1)
+    outputs = torch.log(outputs)
+    #loss = CE(outputs, target)
+    loss = -torch.mean(torch.sum((F.one_hot(target,trans_mat.shape[0]).float() @ trans_mat_inv) * outputs,axis=1),axis = 0)
+    # loss = F.cross_entropy(outputs,target @ trans_mat_inv)  # TODO
+    return loss
+#############################################################################################################
 
 
 def loss_gls(epoch, y, t, smooth_rate=0.1, wa=0, wb=1):
