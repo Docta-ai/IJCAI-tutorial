@@ -113,11 +113,12 @@ def multiclass_noisify(y, P, random_state=0):
     #print m
     new_y = y.copy()
     flipper = np.random.RandomState(random_state)
+    print(f'flip with random seed {random_state}')
 
     for idx in np.arange(m):
         i = y[idx]
         # draw a vector with only an 1
-        flipped = flipper.multinomial(1, P[i, :][0], 1)[0]
+        flipped = flipper.multinomial(1, P[i, :], 1)[0]
         new_y[idx] = np.where(flipped == 1)[0]
 
     return new_y
@@ -133,23 +134,10 @@ def noisify_pairflip(y_train, noise, random_state=None, nb_classes=10):
 
     if n > 0.0:
         # 0 -> 1
-        for i in range(0, nb_classes):
-            P[i, i] = 1. - n
-        P[9, 1] = n
-        P[1, 9] = n
-        P[2, 0] = n
-        P[0, 2] = n
-        P[4, 7] = n
-        P[7, 4] = n
-        P[3, 5] = n
-        P[5, 3] = n
-        P[6, 8] = n
-        P[8, 6] = n
-#
-#        P[0, 0], P[0, 1] = 1. - n, n
-#        for i in range(1, nb_classes-1):
-#            P[i, i], P[i, i + 1] = 1. - n, n
-#        P[nb_classes-1, nb_classes-1], P[nb_classes-1, 0] = 1. - n, n
+        P[0, 0], P[0, 1] = 1. - n, n
+        for i in range(1, nb_classes-1):
+            P[i, i], P[i, i + 1] = 1. - n, n
+        P[nb_classes-1, nb_classes-1], P[nb_classes-1, 0] = 1. - n, n
 
         y_train_noisy = multiclass_noisify(y_train, P=P,
                                            random_state=random_state)

@@ -3,7 +3,7 @@ import os
 import torch
 import torch.nn.functional as F
 from torch.autograd import Variable
-from data.datasets import input_dataset
+from data.datasets_cifarn import input_dataset
 from models import *
 import argparse
 

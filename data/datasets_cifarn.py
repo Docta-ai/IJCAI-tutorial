@@ -1,6 +1,6 @@
 import numpy as np 
 import torchvision.transforms as transforms
-from .cifar import CIFAR10, CIFAR100
+from .cifarn import CIFAR10, CIFAR100
 
 
 
@@ -29,14 +29,14 @@ test_cifar100_transform = transforms.Compose([
 ])
 def input_dataset(dataset, noise_type, noise_path, is_human):
     if dataset == 'cifar10':
-        train_dataset = CIFAR10(root='~/cifarn/data/',
+        train_dataset = CIFAR10(root='~/data/',
                                 download=True,  
                                 train=True, 
                                 transform = train_cifar10_transform,
                                 noise_type = noise_type,
                                 noise_path = noise_path, is_human=is_human
                            )
-        test_dataset = CIFAR10(root='~/cifarn/data/',
+        test_dataset = CIFAR10(root='~/data/',
                                 download=False,  
                                 train=False, 
                                 transform = test_cifar10_transform,
