@@ -1,6 +1,6 @@
 import numpy as np
 
-
+# Systhesize clean data
 np.random.seed(0)
 num_samples = 1000
 T = [
@@ -10,8 +10,9 @@ T = [
 p = [0.4, 0.6]
 clean_labels = [0] * int(num_samples * p[0]) + [1] * (num_samples - int(num_samples * p[0]))
 np.random.shuffle(clean_labels)
-noisy_labels = []
 
+# Generate noisy labels
+noisy_labels = []
 for i in clean_labels:
     noisy_labels.append(np.random.choice([0, 1], size = 3, p=T[i]))
 
