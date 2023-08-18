@@ -15,7 +15,7 @@ details = False
 
 
 hoc_cfg = dict(
-    max_step = 1501, 
+    max_step = 501, 
     T0 = None, 
     p0 = None, 
     lr = 0.1, 
@@ -29,7 +29,7 @@ hoc_cfg = dict(
 detect_cfg = dict(
     num_epoch = 51,
     sample_size = 35000,
-    k = 10,
+    k = 5,
     name = 'simifeat',
     method = 'rank'
 )
