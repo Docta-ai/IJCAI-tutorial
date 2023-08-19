@@ -49,4 +49,6 @@ dataset.consensus_patterns = noisy_labels
 # diagnose labels
 estimator = Diagnose(cfg, dataset, report = report)
 estimator.hoc()
+
+
 print(report.diagnose)

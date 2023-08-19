@@ -1,0 +1,4 @@
+
+*.pyc
+data/cifar-10-batches-py/*
+data/cifar-10-python.tar.gz
