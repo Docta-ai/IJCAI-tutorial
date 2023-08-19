@@ -76,7 +76,7 @@ def train(epoch, train_loader, model, optimizer):
 # Evaluate the Model
 def evaluate(test_loader, model):
     model.eval()    # Change model to 'eval' mode.
-    print('previous_best', best_acc_)
+    # print('previous_best', best_acc_)
     correct = 0
     total = 0
     for images, labels, _ in test_loader:
