@@ -17,3 +17,11 @@ Materials:
 ```Sec3_lnl_cifarn.ipyn```: Includes Module 3: Robust learning with noisy labels; Module 4:  Real-world label noise and performance;
 
 ```Sec4_challenge_future.ipynb```: Includes Module 5: Challenges and Future Directions.
+
+To run the code with [Docta.ai](https://github.com/Docta-ai/docta), please install docta.ai first (and star if you think it is helpful).
+```bash
+pip install docta.ai
+```
+
+
+
